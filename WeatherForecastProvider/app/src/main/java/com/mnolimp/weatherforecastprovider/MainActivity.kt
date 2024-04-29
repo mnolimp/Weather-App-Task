@@ -93,12 +93,12 @@ fun APICall(
     stateWeatherMaxTemperature: MutableState<String>,
     stateWeatherMinTemperature: MutableState<String>,
     stateWeatherType: MutableState<String>,
-    lat : String,
-    lon : String
+    number: Int
 ) {
     executor.execute {
         val APIkey = "c2ce0be54eeb289483acdd10c56d282b"
-
+        val lat = citiesList.get(number).get(1)
+        val lon = citiesList.get(number).get(2)
         val url =
             "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$APIkey&units=metric"
         val recievedInfo = URL(url).readText()
@@ -123,7 +123,7 @@ fun APICall(
         weatherCondition = jsonInfo.getJSONObject("clouds")
         weatherCloudness = weatherCondition.getInt("all")
 
-        stateLocation.value = location
+        stateLocation.value = citiesList.get(number).get(0) + ", " + location
         stateWeatherTemperature.value = weatherTemperature
         stateWeatherFeelsLike.value = weatherFeelsLike
         stateWeatherMaxTemperature.value = weatherMaxTemperature
@@ -180,6 +180,7 @@ fun showInfo() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .fillMaxHeight(0.15f)
                 .border(
                     2.dp,
                     Color.LightGray,
@@ -190,9 +191,10 @@ fun showInfo() {
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .fillMaxHeight(0.1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .fillMaxWidth(0.4f)
+                    .fillMaxHeight()
+                    .padding(5.dp),
+                horizontalAlignment = Alignment.Start,
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
@@ -202,8 +204,9 @@ fun showInfo() {
                 )
             }
             Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxWidth()
+                                   .padding(5.dp),
+                horizontalAlignment = Alignment.End
             )
             {
                 Text(
@@ -230,8 +233,7 @@ fun showInfo() {
                     Image(
                         painter = painterResource(id = icTypeId.value),
                         modifier = Modifier
-                            .fillMaxWidth(0.4f)
-                            .clip(RoundedCornerShape(90.dp)),
+                            .fillMaxWidth(0.4f),
                         contentDescription = "ic_clear_night",
                         alignment = Alignment.Center
                     )
@@ -283,12 +285,7 @@ fun showInfo() {
                                     stateWeatherMaxTemperature,
                                     stateWeatherMinTemperature,
                                     stateWeatherType,
-                                    citiesList
-                                        .get(i)
-                                        .get(1),
-                                    citiesList
-                                        .get(i)
-                                        .get(2)
+                                    i
                                 )
                             }) {
                         Text(
