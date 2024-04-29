@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
@@ -38,7 +40,7 @@ import java.net.URL
 import java.util.concurrent.Executors
 
 private val executor = Executors.newSingleThreadExecutor()
-private var location: String = "Unknown"
+private var location : String = "Unknown"
 private var weatherTemperature : String = "Zero"
 private var weatherFeelsLike : String = "Zero"
 private var weatherMaxTemperature : String = "Zero"
@@ -71,6 +73,7 @@ private val citiesList = arrayListOf(
     arrayListOf("Belgrade", "44.49", "20.28")
 )
 
+
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,10 +100,9 @@ fun APICall(
         val url =
             "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lon&appid=$APIkey&units=metric"
         val recievedInfo = URL(url).readText()
+        val jsonInfo = JSONObject(recievedInfo)
 
         Log.d("Recieved info", recievedInfo)
-
-        val jsonInfo = JSONObject(recievedInfo)
 
         var weatherCondition = jsonInfo.getJSONObject("main")
         location = jsonInfo.getString("name")
@@ -125,8 +127,6 @@ fun APICall(
         stateWeatherMaxTemperature.value = weatherMaxTemperature
         stateWeatherMinTemperature.value = weatherMinTemperature
         stateWeatherType.value = weatherType
-
-        Log.d("City", location)
     }
 }
 
@@ -176,18 +176,20 @@ fun showInfo() {
 
     Column {
         Row(
-            modifier = Modifier.fillMaxWidth()
-                               .border(
-                                   2.dp,
-                                   Color.LightGray,
-                                   RoundedCornerShape(15.dp)
-                               ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    2.dp,
+                    Color.LightGray,
+                    RoundedCornerShape(15.dp)
+                ),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth(0.5f)
-                                   .fillMaxHeight(0.1f),
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .fillMaxHeight(0.1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -225,7 +227,9 @@ fun showInfo() {
                 if(icTypeId.value != 0) {
                     Image(
                         painter = painterResource(id = icTypeId.value),
-                        modifier = Modifier.fillMaxWidth(0.4f).clip(RoundedCornerShape(90.dp)),
+                        modifier = Modifier
+                            .fillMaxWidth(0.4f)
+                            .clip(RoundedCornerShape(90.dp)),
                         contentDescription = "ic_clear_night",
                         alignment = Alignment.Center
                     )
@@ -258,29 +262,10 @@ fun showInfo() {
                 )
             }
         }
-        //Divider(color = Color.LightGray, thickness = 1.dp)
+
         LazyColumn(modifier = Modifier.fillMaxHeight(),
                    horizontalAlignment = Alignment.CenterHorizontally) {
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .padding(5.dp)
-                        .border(2.dp, Color.LightGray, RoundedCornerShape(15.dp))
-                        .clickable {
-
-                        }) {
-                    Text(
-                        text = "Choose another city",
-                        fontSize = 22.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxHeight()
-                    )
-                }
-            }
-            for(i in 0..citiesList.size-1){
+            for(i in 0 until citiesList.size){
                 item {
                     Row(
                         horizontalArrangement = Arrangement.Center,
