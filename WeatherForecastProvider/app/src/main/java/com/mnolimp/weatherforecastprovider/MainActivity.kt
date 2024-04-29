@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +14,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -21,10 +25,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 import org.json.JSONObject
@@ -46,7 +52,23 @@ private val citiesList = arrayListOf(
     arrayListOf("Saint-Petersburg", "59.57", "30.19"),
     arrayListOf("Novosibirsk", "55.01", "82.55"),
     arrayListOf("Ekaterinburg", "56.50", "60.35"),
-    arrayListOf("Vladivostok", "43.07", "131.54")
+    arrayListOf("Vladivostok", "43.07", "131.54"),
+    arrayListOf("Saratov", "51.32", "46.00"),
+    arrayListOf("Volgograd", "48.70", "44.51"),
+    arrayListOf("Bonn", "50.73", "7.09"),
+    arrayListOf("Magnitogorsk", "53.23", "59.02"),
+    arrayListOf("Frankfurt-am-Main", "50.06", "8.30"),
+    arrayListOf("London", "51.30", "00.07"),
+    arrayListOf("Stuttgart", "48.46", "9.10"),
+    arrayListOf("Tobolsk", "58.20", "68.25"),
+    arrayListOf("Salehard", "66.32", "66.38"),
+    arrayListOf("Ioshkar-Ola", "56.37", "47.53"),
+    arrayListOf("Tolliatti", "53.53", "49.34"),
+    arrayListOf("Pnompen", "55.41", "12.35"),
+    arrayListOf("Orel", "52.58", "36.05"),
+    arrayListOf("Zheleznegorsk", "56.25", "93.53"),
+    arrayListOf("Trehgornyy", "54.81", "58.45"),
+    arrayListOf("Belgrade", "44.49", "20.28")
 )
 
 class MainActivity : ComponentActivity() {
@@ -135,10 +157,17 @@ fun showInfo() {
 
     when(weatherType){
         "Clear" -> icTypeId.value = R.drawable.ic_sunny
-        "Clouds" -> icTypeId.value = R.drawable.ic_cloudy
+        "Clouds",
+        "Haze",
+        "Dust",
+        "Fog",
+        "Sand",
+        "Ash",
+        "Squall",
+        "Tornado"-> icTypeId.value = R.drawable.ic_cloudy
         "Snow" -> icTypeId.value = R.drawable.ic_snowy
-        "Rain" -> icTypeId.value = R.drawable.is_rain
-        "Drizzle" -> icTypeId.value = R.drawable.is_rain
+        "Rain",
+        "Drizzle"-> icTypeId.value = R.drawable.is_rain
         "Thunderstorm" -> icTypeId.value = R.drawable.ic_storm
         else -> {
             icTypeId.value = R.drawable.ic_sunny
@@ -146,140 +175,145 @@ fun showInfo() {
     }
 
     Column {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-            Column(modifier = Modifier.fillMaxWidth(0.5f)) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                               .border(
+                                   2.dp,
+                                   Color.LightGray,
+                                   RoundedCornerShape(15.dp)
+                               ),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(0.5f)
+                                   .fillMaxHeight(0.1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 Text(
-                    text = "Right now",
+                    text = "Right now in",
                     textAlign = TextAlign.Center,
-                    fontSize = 20.sp,
+                    fontSize = 25.sp,
                 )
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+                Text(
+                    text = "" + stateLocation.value,
+                    fontSize = 25.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+        Row(modifier = Modifier
+            .border(2.dp, Color.LightGray, RoundedCornerShape(15.dp))
+            .fillMaxWidth()
+            .fillMaxHeight(0.2f),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        )
+            {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+            ) {
+                if(icTypeId.value != 0) {
+                    Image(
+                        painter = painterResource(id = icTypeId.value),
+                        modifier = Modifier.fillMaxWidth(0.4f).clip(RoundedCornerShape(90.dp)),
+                        contentDescription = "ic_clear_night",
+                        alignment = Alignment.Center
+                    )
+                }
                 Text(
                     text = "" + stateWeatherType.value,
                     fontSize = 15.sp,
                     textAlign = TextAlign.Center
                 )
             }
-            Column(modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "City:" + stateLocation.value,
-                    fontSize = 30.sp,
-                    textAlign = TextAlign.Right
-                )
-            }
-        }
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .background(color = Color.Green)
-            ) {
-                if(icTypeId.value != 0) {
-                    Image(
-                        painter = painterResource(id = icTypeId.value),
-                        modifier = Modifier.fillMaxWidth(0.4f),
-                        contentDescription = "ic_clear_night"
-                    )
-                }
-            }
-
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = Color.Blue)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = stateWeatherTemperature.value + "°C",
                     fontSize = 25.sp,
-                    textAlign = TextAlign.Left
+                    textAlign = TextAlign.Center
                 )
                 Text(
                     text = "Feels like " + stateWeatherFeelsLike.value + "°C",
                     fontSize = 15.sp,
-                    textAlign = TextAlign.Left
+                    textAlign = TextAlign.Center
                 )
                 Text(
                     text = "Daily max/min: \n" + stateWeatherMaxTemperature.value + "°C/" + stateWeatherMinTemperature.value + "°C",
                     fontSize = 15.sp,
-                    textAlign = TextAlign.Left
+                    textAlign = TextAlign.Center
                 )
             }
         }
-        LazyColumn(modifier = Modifier.fillMaxHeight()) {
+        //Divider(color = Color.LightGray, thickness = 1.dp)
+        LazyColumn(modifier = Modifier.fillMaxHeight(),
+                   horizontalAlignment = Alignment.CenterHorizontally) {
+            item {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(5.dp)
+                        .border(2.dp, Color.LightGray, RoundedCornerShape(15.dp))
+                        .clickable {
+
+                        }) {
+                    Text(
+                        text = "Choose another city",
+                        fontSize = 22.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxHeight()
+                    )
+                }
+            }
             for(i in 0..citiesList.size-1){
                 item {
-                    Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth().clickable {
-                        APICall(
-                            stateLocation,
-                            stateWeatherTemperature,
-                            stateWeatherFeelsLike,
-                            stateWeatherMaxTemperature,
-                            stateWeatherMinTemperature,
-                            stateWeatherType,
-                            citiesList.get(i).get(1),
-                            citiesList.get(i).get(2)
-                        )
-                    }) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .padding(5.dp)
+                            .border(2.dp, Color.LightGray, RoundedCornerShape(15.dp))
+                            .clickable {
+                                APICall(
+                                    stateLocation,
+                                    stateWeatherTemperature,
+                                    stateWeatherFeelsLike,
+                                    stateWeatherMaxTemperature,
+                                    stateWeatherMinTemperature,
+                                    stateWeatherType,
+                                    citiesList
+                                        .get(i)
+                                        .get(1),
+                                    citiesList
+                                        .get(i)
+                                        .get(2)
+                                )
+                            }) {
                         Text(
                             text = citiesList.get(i).get(0),
                             fontSize = 22.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxHeight()
                         )
                     }
                 }
             }
         }
     }
-
-    /*Column {
-        Column {
-            Text(text = "Right now", modifier = Modifier.fillMaxWidth(1f), fontSize = 20.sp)
-        }
-        Column {
-            Text(
-                text = "City:" + stateLocation.value,
-                modifier = Modifier.fillMaxWidth(1f),
-                fontSize = 50.sp,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "Current temp: " + stateWeatherTemperature.value,
-                modifier = Modifier.fillMaxWidth(1f),
-                fontSize = 25.sp,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "Feels like: " + stateWeatherFeelsLike.value,
-                modifier = Modifier.fillMaxWidth(1f),
-                fontSize = 25.sp,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "" + stateWeatherMaxTemperature.value,
-                modifier = Modifier.fillMaxWidth(1f),
-                fontSize = 25.sp,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "" + stateWeatherMinTemperature.value,
-                modifier = Modifier.fillMaxWidth(1f),
-                fontSize = 25.sp,
-                textAlign = TextAlign.Center
-            )
-        }
-        Button(onClick = {
-            APICall(
-                stateLocation,
-                stateWeatherTemperature,
-                stateWeatherFeelsLike,
-                stateWeatherMaxTemperature,
-                stateWeatherMinTemperature
-            )
-        },
-            Modifier
-                .padding(5.dp)
-                .fillMaxWidth(1f)) {
-            Text(text = "Refresh")
-        }
-    }*/
 }

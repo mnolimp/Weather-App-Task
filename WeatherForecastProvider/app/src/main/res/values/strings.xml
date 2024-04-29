@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Weather Forecast Provider</string>
+    <string name="title_activity_city_choose">CityChoose</string>
 </resources>
