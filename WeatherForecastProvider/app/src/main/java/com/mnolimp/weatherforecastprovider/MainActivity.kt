@@ -1,5 +1,6 @@
 package com.mnolimp.weatherforecastprovider
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -27,11 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 import org.json.JSONObject
 import java.net.URL
@@ -46,7 +50,8 @@ private var weatherMinTemperature : String = "Zero"
 private var weatherType : String = "Unknown"
 private var weatherCloudness : Int = 0
 private var weatherWindSpeed : Int = 0
-private val citiesList = arrayListOf(
+
+val citiesList = arrayListOf(
     arrayListOf("Omsk", "55.00", "73.24"),
     arrayListOf("Moscow", "55.45", "37.37"),
     arrayListOf("Saint-Petersburg", "59.57", "30.19"),
@@ -70,11 +75,11 @@ private val citiesList = arrayListOf(
     arrayListOf("Trehgornyy", "54.81", "58.45"),
     arrayListOf("Belgrade", "44.49", "20.28")
 )
-
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent{
             showInfo()
         }
@@ -176,12 +181,13 @@ fun showInfo() {
 
     Column {
         Row(
-            modifier = Modifier.fillMaxWidth()
-                               .border(
-                                   2.dp,
-                                   Color.LightGray,
-                                   RoundedCornerShape(15.dp)
-                               ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    2.dp,
+                    Color.LightGray,
+                    RoundedCornerShape(15.dp)
+                ),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -258,7 +264,6 @@ fun showInfo() {
                 )
             }
         }
-        //Divider(color = Color.LightGray, thickness = 1.dp)
         LazyColumn(modifier = Modifier.fillMaxHeight(),
                    horizontalAlignment = Alignment.CenterHorizontally) {
             item {
@@ -270,7 +275,7 @@ fun showInfo() {
                         .padding(5.dp)
                         .border(2.dp, Color.LightGray, RoundedCornerShape(15.dp))
                         .clickable {
-
+                            
                         }) {
                     Text(
                         text = "Choose another city",

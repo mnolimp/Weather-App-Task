@@ -1,5 +1,6 @@
 package com.mnolimp.weatherforecastprovider
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,14 +32,16 @@ import com.mnolimp.weatherforecastprovider.ui.theme.WeatherForecastProviderTheme
 class CityChoose : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
 
+        setContent {
+            showInfo2()
         }
     }
 }
 
-/*@Composable
+@Composable
 fun showInfo2(){
+    val context = LocalContext.current
     Column {
         LazyColumn(
             modifier = Modifier.fillMaxHeight(),
@@ -53,20 +57,9 @@ fun showInfo2(){
                             .padding(5.dp)
                             .border(2.dp, Color.LightGray, RoundedCornerShape(15.dp))
                             .clickable {
-                                APICall(
-                                    stateLocation,
-                                    stateWeatherTemperature,
-                                    stateWeatherFeelsLike,
-                                    stateWeatherMaxTemperature,
-                                    stateWeatherMinTemperature,
-                                    stateWeatherType,
-                                    citiesList
-                                        .get(i)
-                                        .get(1),
-                                    citiesList
-                                        .get(i)
-                                        .get(2)
-                                )
+                                val intent = Intent(context, CityChoose::class.java)
+                                intent.putStringArrayListExtra("choosenCity", citiesList.get(i))
+                                context.startActivity(intent)
                             }) {
                         Text(
                             text = citiesList.get(i).get(0),
@@ -79,4 +72,4 @@ fun showInfo2(){
             }
         }
     }
-}*/
+}
