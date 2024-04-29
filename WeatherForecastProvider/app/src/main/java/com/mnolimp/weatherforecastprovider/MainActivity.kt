@@ -34,6 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 import org.json.JSONObject
 import java.net.URL
@@ -73,11 +75,11 @@ private val citiesList = arrayListOf(
     arrayListOf("Belgrade", "44.49", "20.28")
 )
 
-
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent{
             showInfo()
         }
@@ -262,7 +264,6 @@ fun showInfo() {
                 )
             }
         }
-
         LazyColumn(modifier = Modifier.fillMaxHeight(),
                    horizontalAlignment = Alignment.CenterHorizontally) {
             for(i in 0 until citiesList.size){
