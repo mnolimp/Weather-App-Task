@@ -75,6 +75,19 @@ val citiesList = arrayListOf(
     arrayListOf("Trehgornyy", "54.81", "58.45"),
     arrayListOf("Belgrade", "44.49", "20.28")
 )
+<<<<<<< Updated upstream
+=======
+
+private var dataTimeForecast : String = "Unknown"
+private var tempForecast : String = "Unknown"
+private var tempFeelsLikeForecast : String = "Unknown"
+private var weatherForecast : String = "Unknown"
+private var windForecast : String = "Unknown"
+private var forecast = arrayListOf(
+    arrayListOf("Unknown", "Unknown", "Unknown", "Unknown", "Unknown"),
+)
+
+>>>>>>> Stashed changes
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,6 +145,38 @@ fun APICall(
         stateWeatherType.value = weatherType
 
         Log.d("City", location)
+    }
+}
+
+fun APICallForecast(lat : String,
+                    lon : String){
+    executor.execute {
+        val APIkey = "c2ce0be54eeb289483acdd10c56d282b"
+        val url =
+            "https://api.openweathermap.org/data/2.5/forecast?lat=$lat&lon=$lon&appid=$APIkey&units=metric"
+        val recievedInfo = URL(url).readText()
+        val jsonInfo = JSONObject(recievedInfo)
+        val weatherConditionArray = jsonInfo.getJSONArray("list")
+
+        Log.d("forecast", recievedInfo)
+
+        for(i in 0..15) {
+            val weatherCondition = weatherConditionArray.getJSONObject(i)
+            dataTimeForecast = weatherCondition.getString("dt")
+            tempForecast = weatherCondition.getJSONObject("main").getString("temp")
+            tempFeelsLikeForecast = weatherCondition.getJSONObject("main").getString("feels_like")
+            weatherForecast = weatherCondition.getJSONArray("weather").getJSONObject(0).getString("main")
+            windForecast = weatherCondition.getJSONObject("wind").getString("speed")
+            val listOfForecast = arrayListOf(
+                dataTimeForecast,
+                tempForecast,
+                tempFeelsLikeForecast,
+                weatherForecast,
+                windForecast
+            )
+            forecast.add(listOfForecast)
+        }
+        Log.d("forecast", recievedInfo)
     }
 }
 
@@ -264,6 +309,47 @@ fun showInfo() {
                 )
             }
         }
+<<<<<<< Updated upstream
+=======
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.1f)
+                .padding(5.dp)
+        ){
+            Text(
+                text = "Forecast",
+                fontSize = 22.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxHeight()
+            )
+        }
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.1f)
+                .padding(5.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(0.5f),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+
+            }
+        }
+>>>>>>> Stashed changes
         LazyColumn(modifier = Modifier.fillMaxHeight(),
                    horizontalAlignment = Alignment.CenterHorizontally) {
             item {
@@ -302,6 +388,14 @@ fun showInfo() {
                                     stateWeatherMaxTemperature,
                                     stateWeatherMinTemperature,
                                     stateWeatherType,
+                                    citiesList
+                                        .get(i)
+                                        .get(1),
+                                    citiesList
+                                        .get(i)
+                                        .get(2)
+                                )
+                                APICallForecast(
                                     citiesList
                                         .get(i)
                                         .get(1),
